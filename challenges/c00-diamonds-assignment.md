@@ -49,7 +49,7 @@ define how you will be graded, both on an individual and team basis.
 
 ## Individual
 
-<!-- ------------------------- -->
+<!-- --------------------------->
 
 | Category | Needs Improvement | Satisfactory |
 |----|----|----|
@@ -62,7 +62,7 @@ define how you will be graded, both on an individual and team basis.
 
 ## Submission
 
-<!-- ------------------------- -->
+<!----------------------------->
 
 Make sure to commit both the challenge report (`report.md` file) and
 supporting files (`report_files/` folder) when you are done! Then submit
@@ -96,15 +96,8 @@ document your observations.
 *Hint*: We learned how to do this in `e-vis00-basics`!
 
 ``` r
-ggplot(            
-  data = diamonds  
-) +                
-  geom_point(      
-    mapping = aes( 
-      x = price,   
-      y = carat    
-    )
-  )
+ggplot(diamonds, aes(x = carat, y = price)) + 
+  geom_point()
 ```
 
 ![](c00-diamonds-assignment_files/figure-gfm/q1-task-1.png)<!-- -->
@@ -112,21 +105,19 @@ ggplot(
 **Observations**:
 
 - I can see the plot, I do think that this is a good representation of
-  the information.
+  the information. Looking at the graph, I can see that there is almost
+  this linear relationship from 0 to 1 carats. Then from 1 to 3 carats,
+  we see this exponential growth, but at the same time we can also see a
+  pretty strange phenomenon where they are many points in the data that
+  group up at the 1, 1.5 and 2 carat mark. From this, I would suggest
+  that there is something else that is affecting the price of the
+  diamonds other than simply just the carats.
 
 ### **q2** Create a visualization showing variables `carat`, `price`, and `cut` simultaneously. Experiment with which variable you assign to which aesthetic (`x`, `y`, etc.) to find an effective visual.
 
 ``` r
-ggplot(            
-  data = diamonds  
-) +                
-  geom_point(      
-    mapping = aes( 
-      x = price,   
-      y = carat,
-      color = cut
-    )
-  )
+ggplot(diamonds, aes(x = carat, y = price, color = cut)) + 
+  geom_point()
 ```
 
 ![](c00-diamonds-assignment_files/figure-gfm/q2-task-1.png)<!-- -->
@@ -134,8 +125,17 @@ ggplot(
 **Observations**:
 
 - I really do think that the small addition of the cut as the color
-  really helps in visualizing the data. It helps understand the relation
+  really helps in visualizing the data.It helps understand the relation
   between the 3 characteristics of the diamond.
+
+As mentioned in my previous observation, we can still see the linear
+relationship from 0 to 1 carats, then from 1 to 3 carats,this
+exponential growth and finally the phenomenon that happens on the 1, 1.5
+and 2 carat marks. However, we can now see with the representation on
+“Cut” with color, that cut doesnt affect the price of a diamond that
+much, as you can have a fair cut and have the price be very high ( as
+shown in the top right corner of the graph), but also have an Ideal cut
+and have the price be fairly low (as shown at the bottom right).
 
 # Communication
 
