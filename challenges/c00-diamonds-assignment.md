@@ -96,7 +96,13 @@ document your observations.
 *Hint*: We learned how to do this in `e-vis00-basics`!
 
 ``` r
-ggplot(diamonds, aes(x = carat, y = price)) + 
+diamonds %>%
+  ggplot(
+    aes( 
+      x = carat, 
+      y = price
+      )
+  ) +
   geom_point()
 ```
 
@@ -116,7 +122,14 @@ ggplot(diamonds, aes(x = carat, y = price)) +
 ### **q2** Create a visualization showing variables `carat`, `price`, and `cut` simultaneously. Experiment with which variable you assign to which aesthetic (`x`, `y`, etc.) to find an effective visual.
 
 ``` r
-ggplot(diamonds, aes(x = carat, y = price, color = cut)) + 
+diamonds %>%
+  ggplot(
+    aes( 
+      x = carat, 
+      y = price,
+      color = cut
+      )
+  ) +
   geom_point()
 ```
 
