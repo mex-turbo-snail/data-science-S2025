@@ -113,12 +113,6 @@ glimpse(df_titanic)
     ## $ Survived <chr> "No", "No", "No", "No", "No", "No", "No", "No", "No", "No", "…
     ## $ n        <dbl> 0, 0, 35, 0, 0, 0, 17, 0, 118, 154, 387, 670, 4, 13, 89, 3, 5…
 
-``` r
-?Titanic
-```
-
-    ## starting httpd help server ... done
-
 **Observations**:
 
 - Within the data of ‘df_titanic’, we can see the demographic of the
@@ -132,7 +126,8 @@ glimpse(df_titanic)
 ``` r
 ## NOTE: No need to edit! We'll cover how to
 ## do this calculation in a later exercise.
-df_titanic %>% summarize(total = sum(n))
+df_titanic %>% 
+  summarize(total = sum(n))
 ```
 
     ## # A tibble: 1 × 1
@@ -143,17 +138,25 @@ df_titanic %>% summarize(total = sum(n))
 **Observations**:
 
 - Write your observations here
+
 - Are there any differences?
+
   - Yes, it seems like there is a slight difference in the number of
-    people that were actually on board.
+    people that were actually on board. According to the article, the
+    estimated number of people on the titanic was 2224, which is
+    different the number that is given by the data set.
+
 - If yes, what might account for those differences?
-  - I could be that the data sets could have been created. More
-    specifically, the Titanic data set is from the British Board to
-    Trade in their investigation of the event. In the description of the
-    data set it mentions that there really isn’t a complete agreement
-    among primary resources about the exact number of people that were
-    on board, so this might be why we see some different numbers.
-  - …
+
+It is possible that these differences exist because of how and when that
+data or lists were updated. What I mean by this is the fact that
+currents at the crash site might have caused currents and may have maid
+it hard to find bodies of those who passed, therefore making it hard to
+dictate weather or not someone has actually died. After reading more of
+the Wiki article, it was made clear that there were several different
+reasons for why the numbers are different across sources, including the
+fact that there was confusion about passengers canceling their trip last
+minute and other passengers traveling under different aliases.
 
 ### **q3** Create a plot showing the count of persons who *did* survive, along with aesthetics for `Class` and `Sex`. Document your observations below.
 
@@ -162,25 +165,36 @@ df_titanic %>% summarize(total = sum(n))
 ``` r
 ## TASK: Visualize counts against `Class` and `Sex`
 
-survived <- 
-  df_titanic %>% filter(Survived == 'Yes')
+df_survived <- 
+  df_titanic %>% 
+  filter(
+    Survived == 'Yes'
+    )
 
-class_vs_sex <-
-  survived %>% select('Class', 'Sex')
-
-class_vs_sex %>% 
-    ggplot(aes(Class, fill = Sex)) +
-    geom_bar()
+df_survived %>% 
+ggplot(
+  aes(
+    x = Class,
+    y = n,
+    fill = Sex
+    )) +
+geom_col(position = "dodge")
 ```
 
 ![](c01-titanic-assignment_files/figure-gfm/q3-task-1.png)<!-- -->
 
 **Observations**:
 
-- Here I have a stacked bar chart where we have Class on the x-axis, the
-  count or number of the specific people that fall within those
-  categories and on the right I have a legend explaining what colors
-  represent what.
+- Above I have a stacked vertical bar chart what showcases the
+  relationship between the raw number of people that survived the
+  titanic tragedy, their class, and their sex. As we can see what have
+  some varying numbers, where the Male sex makes up the most of the Crew
+  survivors, where as for the rest of the classes are primary made up of
+  Females. It’s also very interesting to see that the 3rd class seems to
+  have about the same about of both Male and Female survivors. Id also
+  like to point out the fact that as we go down the classes, the less
+  likely the Females are to be those who survived and the Males became
+  the group who where more likely to survive.
 
 # Deeper Look
 
@@ -228,24 +242,47 @@ df_prop
 
 ``` r
 df_prop %>%
-  ggplot(aes(x = Class, fill = Prop), position = "dodge") +
-  geom_bar()
+  filter(
+    Survived == 'Yes'
+    ) %>% 
+
+ggplot(
+  aes(
+    x = Class,
+    y = Prop,
+    fill = Sex
+    )) +
+geom_col(color = "black", position = "dodge")
 ```
 
-    ## Warning: The following aesthetics were dropped during statistical transformation: fill.
-    ## ℹ This can happen when ggplot fails to infer the correct grouping structure in
-    ##   the data.
-    ## ℹ Did you forget to specify a `group` aesthetic or to convert a numerical
-    ##   variable into a factor?
+    ## Warning: Removed 2 rows containing missing values or values outside the scale range
+    ## (`geom_col()`).
 
 ![](c01-titanic-assignment_files/figure-gfm/q4-task-1.png)<!-- -->
 
 **Observations**:
 
-- Write your observations here.
+- Write your observations here. Here I have a stacked vertical Bar chart
+  showing the relationship between the Class and Sex of the Survivors of
+  the Titanic Tragedy. Specifically it takes into account the
+  proportions of the the groups themselves. Some observations I have is
+  the fact that (BEFORE THE BLACK LINES) the proportions for Male and
+  Female for the first and the second classes seem to be exactly the
+  same. In terms of the thirds and crew classes, it is clear to see that
+  the Females take up most of the survivors for the 3rd class and the
+  Females made up the majority of he survivors for the crew class. This
+  is pretty interesting because of the fact that this contradicts the
+  previous plot that I made where for the Crew class, the Males made up
+  almost the entity of the Crew Class.
+
 - Is there anything *fishy* going on in your plot?
-  - Yes, I am getting an error when aesthetics were dropped because
-    ggplot could not correct some information in the data set.
+
+  - Yes, it seems that because we are looking at proportion, there isn’t
+    exactly a distinction between Ages. This is very important because
+    before I implemented the black line to differentiate the
+    information, it wasent exactly clear that this was the case, but
+    after doing this, we can see and understand why the data may look
+    the way it does.
 
 ### **q5** Create a plot showing the group-proportion of occupants who *did* survive, along with aesthetics for `Class`, `Sex`, *and* `Age`. Document your observations below.
 
@@ -254,26 +291,55 @@ additional variables!
 
 ``` r
 df_surv_csa <- 
-  df_titanic %>% filter(Survived == 'Yes')
+  df_titanic %>%
+  group_by(Class, Sex, Age) %>%
+  mutate(
+    Total_2 = sum(n),
+    Prop_2= n / Total_2
+  ) %>%
+  ungroup()
 
-clas_sex_age <-
-  df_surv_csa %>% select('Class', 'Sex', 'Age')
-  
-clas_sex_age %>% 
-  ggplot(aes(Age, fill = Class), position = "dodge") +
-  geom_bar() +
-  facet_grid(~ Sex)
+df_surv_csa %>%
+  filter(
+    Survived == 'Yes'
+    ) %>% 
+  ggplot(
+  aes(
+    x = Age,
+    y = Prop_2,
+    fill = Class
+    )) +
+geom_col(position ="dodge", color = "black")+
+  facet_grid(~Sex)
 ```
+
+    ## Warning: Removed 2 rows containing missing values or values outside the scale range
+    ## (`geom_col()`).
 
 ![](c01-titanic-assignment_files/figure-gfm/q5-task-1.png)<!-- -->
 
-**Observations**: Here I have another stacked bar graph showing Age
-within the groups of Females and Male, and showing their respective
-classes. I think this wasn’t a bad way of representing the data. - - If
-you saw something *fishy* in q4 above, use your new plot to explain the
-fishy-ness. - I really can’t say that I see something fishy with graph,
-it is possible that I might have misread the last question incorrectly,
-to the point where I plotted the wrong thing.
+**Observations**: Here I have a stacked vertical Bar chart showing the
+relationship between the Class, Age,and Sex of the Survivors of the
+Titanic Tragedy. This visualization also taking into account the
+proportions for the given groups. Here we can have a better
+understanding of who made up the majority of the survivors. As we can
+see, both Adult and Child Females made up a good amount of the
+survivors, with the exceptions that there weren’t any children in the
+Crew class as they were not at an age where they could work. Moving on
+to the Male side of things, we can see that the Adults made up and very
+small proportion of the survivors where the Male Children made up a
+greater proportion. This it likely because of the fact that Children and
+Female adults were seen to be more worthy to save than adult men.
+
+- If you saw something *fishy* in q4 above, use your new plot to explain
+  the fishy-ness.
+
+  - This visualization gives us a better explanation of the fishiness
+    that we saw in the previous graph because in adding the Age element,
+    we no longer see the stacked amounts of data. This essentially
+    meaning that in incorporating the Age aspect in this visual, we get
+    a more descriptive and descriptive visual of the difference that Age
+    has in terms of survivors, when it came between Males and Females.
 
 # Notes
 
