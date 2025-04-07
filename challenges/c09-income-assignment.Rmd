@@ -1,7 +1,7 @@
 ---
 title: "US Income"
-author: "(Your name here)"
-date: 202X-XX-XX
+author: "Amir Osorio"
+date: 2025-04-03
 output:
   github_document:
     toc: true
@@ -50,7 +50,7 @@ library(tidyverse)
 
 ```{r q1-task}
 ## TODO: Give the filename for your copy of Table B01003
-filename_pop <- NA_character_
+filename_pop <- "./data/ACSDT5Y2018.B01003-Data.csv"
 
 ## NOTE: No need to edit
 df_pop <-
@@ -80,7 +80,8 @@ This means that for cases listed as `*****` the US Census Bureau recommends trea
 
 ```{r q2-task}
 ## TODO: Give the filename for your copy of Table S1903
-filename_income <- NA_character_
+filename_income <- "./data/ACSST5Y2018.S1903-Data.csv"
+  
 
 ## NOTE: No need to edit
 df_income <-
@@ -120,8 +121,17 @@ df_q3 <-
     contains("median") & matches("\\d-person families") & !contains("Annotation of")
   ) %>%
   mutate(across(contains("median"), as.numeric)) %>%
-## TODO: Pivot the data, rename the columns
-  glimpse()
+# ## TODO: Pivot the data, rename the columns
+  pivot_longer(
+    names_to = c(".value", "category"),
+    names_pattern = "(Estimate|Margin of Error)!!Median income \\(dollars\\)!!(\\d+-person families)"
+) %>%
+  rename(
+    geographic_area_name = "Geographic Area Name",
+    income_estimate = "Estimate",
+    income_moe = "Margin of Error"
+  ) %>% 
+   glimpse()
 ```
 
 Use the following tests to check your work:
@@ -152,7 +162,14 @@ $$\text{MOE} = 1.645 \times \text{SE}.$$
 
 ```{r q4-task}
 
-df_q4
+df_q4 <- df_q3 %>%
+  mutate(
+    income_SE = income_moe/1.645, 
+    income_lo = income_estimate - qnorm( 1 - (1 - 0.99) / 2 ) * income_SE,
+    income_hi = income_estimate + qnorm( 1 - (1 - 0.99) / 2 ) * income_SE,
+    income_CV = income_SE / income_estimate
+  ) 
+
 ```
 
 Use the following tests to check your work:
@@ -208,7 +225,12 @@ One last wrangling step: We need to join the two datasets so we can compare popu
 ```{r q5-task}
 ## TODO: Join df_q4 and df_pop by the appropriate column
 
-df_data
+df_data <-
+  df_q4 %>%
+  left_join(df_pop, by = "Geography") %>% 
+  glimpse()
+  
+  
 ```
 
 # Analysis
@@ -246,13 +268,12 @@ df_data %>%
 **Observations**:
 
 - Document your observations here.
-  - (Your response here)
-  - (Your response here)
-  - ...
+  - Based on the visual, I can see that the families that end up on the lower side of the median household income are 2 person families. I find it interesting however that most of the other sized families vary in terms of range depending on county. As an example of this, we can see that in Nantucket, there is a really wide range of median household income when it comes to 5 person families, but when it comes to 5 person families in Bristol for example, that range it extremely low. I makes you think on why ity might be this way, but also gives you the information on which counties might be struggling the most in terms of median household income, and with this information, the opportunity to help those who need it.
+  
 - Can you confidently distinguish between household incomes in Suffolk county? Why or why not?
-  - (Your response here)
+  - No, I say this because in Suffolk in particular, the household income ranges are so small that it becomes difficult to differentiate one another. 
 - Which counties have the widest confidence intervals?
-  - (Your response here)
+  - Nantucket, Dukes, and Hampshire.
 
 In the next task you'll investigate the relationship between population and uncertainty.
 
@@ -261,14 +282,18 @@ In the next task you'll investigate the relationship between population and unce
 *Hint*: Remember that standard error is a function of *both* variability (e.g. variance) and sample size.
 
 ```{r q7-task}
+df_data %>%
+  ggplot(aes(income_SE, population_estimate, color = category)) +
+  geom_point()+
+  scale_y_log10()
 ```
 
 **Observations**:
 
 - What *overall* trend do you see between `SE` and population? Why might this trend exist?
-  - (Your response here)
+  - Overall, as population estimates go down the standard error for income rises, but at the smae time higher families tend to rise more.
 - What does this *overall* trend tell you about the relative ease of studying small vs large counties?
-  - (Your response here)
+  - This trend essentially tells us that it is easier to study larger counties as it offers less standard error. This can be shown as we go down in numbers of population, the chance of getting higher numbers in error becomes more likely. 
 
 # Going Further
 <!-- ----------------------------------------------------------------------- -->
@@ -279,11 +304,34 @@ Now it's your turn! You have income data for every county in the United States: 
 
 ```{r q8-task}
 ## TODO: Pose and answer your own question about the data
+## Question: How does income vary in New York City in accordance to population
+
+df_data %>%
+  filter(str_detect(geographic_area_name, "New York")) %>%
+  mutate(
+    county = str_remove(geographic_area_name, " County,.*$")
+  ) %>%
+  ggplot(aes(x = income_estimate, y = population_estimate)) +
+  geom_point() +
+  
+  geom_point(
+    data = . %>% filter(county == "Bronx"),
+    color = "red",
+    size = 5
+  ) +
+  geom_point(
+    data = . %>% filter(county == "Queens"),
+    color = "blue",
+    size = 5) +
+  geom_point(
+    data = . %>% filter(county == "New York"),
+    color = "Green",
+    size = 5)
 ```
 
 **Observations**:
 
-- Document your observations here
+- Here I have a scatter plot showing the relationship between the population estimate and income estimates in New York (where I am original from). All counties are included but, I highlighted the Bronx, Queens and Manhattan (Which is often refereed to as New York). Initially, I found interesting was that even though Queens has the higher population out of the 3, Manhattan still has the higher income. After some thought, this made sense because more people commute to work in Manhattan and choose to live in other boroughs like Queens or The Bronx because of the price of living in Manhattan (Due to the limited estate). Overall I thought this was interesting to look at and wonder what other things may be affecting this.
 
 Ideas:
 
