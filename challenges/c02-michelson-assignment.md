@@ -157,14 +157,18 @@ df_q1 %>%
 | 2            |  39 |     299858.5 |
 | 1            |  15 |     299808.0 |
 
-**Observations**: - Write your observations here! - One, I can see that
-the format in general is different, is in the table that I made is dark
-and Im not sure how to make it another way. Second, I notice that the
-values for the mean velocity are in decimal points, as where in the
-table that I was tasked to recreate are whole number. - Why might your
-table differ from Michelson’s? - As I mentioned above the main
-difference is that of the data being in decimal points, this likely
-being because of the finding mean process.
+**Observations**: - Write your observations here!
+
+One, I can see that the format in general is different, is in the table
+that I made is dark and Im not sure how to make it another way. Second,
+I notice that the values for the mean velocity are in decimal points, as
+where in the table that I was tasked to recreate are whole number.
+
+\- Why might your table differ from Michelson’s?
+
+As I mentioned above the main difference is that of the data being in
+decimal points, this is likely due to the fact that the table that I was
+trying to recreate was rounded to the nearest whole number.
 
 The `Velocity` values in the dataset are the speed of light *in air*;
 Michelson introduced a couple of adjustments to estimate the speed of
@@ -228,51 +232,36 @@ human judgment.\[2\]
 ## TODO: Compare Michelson's estimate and error against the true value
 true_error = LIGHTSPEED_VACUUM - LIGHTSPEED_MICHELSON
 
-val_plus = LIGHTSPEED_MICHELSON + LIGHTSPEED_PM
-
-val_minus = LIGHTSPEED_MICHELSON - LIGHTSPEED_PM
-
-
-error_plus = LIGHTSPEED_VACUUM - val_plus
-
-error_minus = LIGHTSPEED_VACUUM - val_minus
-
-
-abs(true_error) > abs(error_minus)
+abs(LIGHTSPEED_PM) < abs(true_error)
 ```
 
     ## [1] TRUE
 
 ``` r
-abs(true_error) < abs(error_minus)
+abs(LIGHTSPEED_PM) - abs(true_error)
 ```
 
-    ## [1] FALSE
+    ## [1] -100.542
 
 ``` r
-abs(true_error) > abs(error_plus)
+true_error
 ```
 
-    ## [1] FALSE
-
-``` r
-abs(true_error) < abs(error_plus)
-```
-
-    ## [1] TRUE
+    ## [1] -151.542
 
 **Observations**: - Is Michelson’s estimate of the error (his
-uncertainty) greater or less than the true error? - When the estimate
-was added, it was greater, when subtracted,it was less.
+uncertainty) greater or less than the true error?
+
+- In terms of magnitude, Michelson’s estimate of error was less that the
+  magnitude of the true error.
 
 - Make a quantitative comparison between Michelson’s uncertainty and his
   error.
 
-  - When I looked at of it was greater or or not, I looked at both
-    whether or not the range, + or -, made any of the difference. It
-    turns out that the error when subtracting the estimate that he made,
-    comes out to be less than the true error When adding the estimate,
-    the error comes out to be greater than the true error.
+When taking the absolute value of Michelson’s estimate of error, and the
+absolute value of the true error, I found that the error that
+Michelson’s estimate was less that that of the true value in magnitude.
+.
 
 The following plot shows all of Michelson’s data as a [control
 chart](https://en.wikipedia.org/wiki/Control_chart); this sort of plot
@@ -367,46 +356,112 @@ median lines and the positions in which the data is on the chart.
 
 ``` r
 df_plot <- df_q2 %>%
-  select(Distinctness, VelocityVacuum, Velocity) %>%
-  pivot_longer(cols = c(VelocityVacuum, Velocity), names_to = "Recording", values_to = "Velocity")
+  select(Distinctness, VelocityVacuum) %>%
+  pivot_longer(cols = c(VelocityVacuum), values_to = "Velocity")
+
+mean_velocity <- df_q2 %>%
+  summarise(mean_val = mean(VelocityVacuum)) %>%
+  pull(mean_val)
 
 ggplot(df_plot, aes(x = Distinctness, y = Velocity)) +
-  geom_jitter(aes(color = Recording)) +  
-  facet_wrap(~Recording)
+  geom_jitter() +
+  geom_abline(slope = 0, intercept = mean_velocity, col = "Green", size = 4) +
+  geom_abline(slope = 0, intercept = LIGHTSPEED_VACUUM, col = "blue", size = 3) +
+  geom_abline(slope = 0, intercept = LIGHTSPEED_MICHELSON, col = "red", size = 1) 
 ```
 
+    ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+    ## ℹ Please use `linewidth` instead.
+    ## This warning is displayed once every 8 hours.
+    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+    ## generated.
+
 ![](c02-michelson-assignment_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+
 **Observations**:
 
-- For this plot in particular, I noticed that the data for
-  VelocityVacuum is much higher than that of the Velocity Data. I also
-  noticed that there doesn’t seem to be a direct correlation, and what I
-  mean by that is that it isn’t like it was just “scaled” by a cretin
-  value but it seems that the points for VelocityVacuum don’t really
-  sharer the same positions as the Vacuum data, but are still much
-  higher Velocity.
+- Here I have a “jitter” plot of Velocity Vacuum vs Distinctness. I have
+  also included horizontal lines that describe the following:
+  - BLUE LINE —– Exact Speed of light in a Vacuum
+  - RED LINE —– Mean Value of Michelson’s Speed of light in a Vacuum
+    Data
+  - GREEN LINE —– Michelson’s Speed of light in a Vacuum
+- After taking the mean of the data that Michelson represented by the
+  (RED LINE), we can see that it is very similar to Michelson Speed of
+  light value (GREEN LINE). When we compare these two lines to that of
+  the Exact Speed of light value (BLUE LINE) we can see that they are in
+  two different places suggesting that they are different in value. This
+  raises the question on why this value might be different, my
+  suggestion (and understanding after doing some research as well) is
+  that their might have been some wrong with the way that Michleson
+  actually recorded his data , causing his data overall to be different
+  then that of the modern day recording of the data.
 
 ``` r
 df_plot <- df_q2 %>%
-  select(Temp, VelocityVacuum, Velocity) %>%
-  pivot_longer(cols = c(VelocityVacuum, Velocity), names_to = "Recording", values_to = "Velocity")
+  select(Temp, VelocityVacuum) %>%
+  pivot_longer(cols = c(VelocityVacuum), values_to = "Velocity")
 
 ggplot(df_plot, aes(x = Temp, y = Velocity)) +
-  geom_jitter(aes(color = Recording)) +  
-  facet_wrap(~Recording)
+  geom_col()
 ```
 
 ![](c02-michelson-assignment_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
-**Observations**: - Still have yet to finish, will resubmit
+
+**Observations**:
+
+- In this graph, I have VelocityVacuum vs Temperature in a Column Chart.
+  As you can see, we have some clear distinction between the lower
+  temperatures and the higher temperatures, this coming from the fact
+  that in the higher temperature range we see higher VelocityVacuum
+  values. From my intent in trying to interpret this , I suggest that
+  the warmer temperature allowed for better day conditions, this then
+  allowing for the collection of the data to be significantly easier(
+  which could have an effect on the overall test data he recorded,
+  causing a difference in the true light speed and Michelsons estimate).
+  In the reading thatw as optional for his experiment , it was described
+  that in his initial experiment , he utilized sun rays, further
+  solidifying why the sun/temperature might have played a part in this
+  Phenomenon.
+
+``` r
+df_plot <- df_q2 %>%
+  select(Date, VelocityVacuum) %>%
+  pivot_longer(cols = c(VelocityVacuum), values_to = "Velocity")
+
+ggplot(df_plot, aes(x = Date, y = Velocity)) +
+  geom_smooth()
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
+
+![](c02-michelson-assignment_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+**Observations**:
+
+- Here I have a visualization of the relationship between the Velocity
+  Vacuum and the Data that the data points were recorded. As we move
+  from the beginning of June to the end of June, we can see this
+  decline/decrease in the recorded value of Velocity Vacuum. This can
+  likely be explained by the location of where he initially recorded his
+  data, The United States Naval Academy in Maryland. Typically in June,
+  marks the time where summer begins in the northern hemisphere ,
+  meaning that temperatures rise due to higher intensity of the Suns
+  Rays. As the experiment reading describes the fact that the Suns Rays
+  we initially used as a light sources for the experiment, and the suns
+  intensity started picking up during this , this may explain why we see
+  a higher variability in the earlier stages in the month, and then
+  being to stay at more of a steady range at the end of the month due to
+  more of a concentration of the Suns rays.
 
 ## Bibliography
 
 - \[1\] Michelson, [Experimental Determination of the Velocity of
   Light](https://play.google.com/books/reader?id=343nAAAAMAAJ&hl=en&pg=GBS.PA115)
-  (1880)
+  1880) 
 - \[2\] Henrion and Fischhoff, [Assessing Uncertainty in Physical
   Constants](https://www.cmu.edu/epp/people/faculty/research/Fischoff-Henrion-Assessing%20uncertainty%20in%20physical%20constants.pdf)
-  (1986)
+  1986) 
 - \[3\] BYU video about a [Fizeau-Foucault
   apparatus](https://www.youtube.com/watch?v=Ik5ORaaeaME), similar to
   what Michelson used.
