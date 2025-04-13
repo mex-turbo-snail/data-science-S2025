@@ -1,7 +1,7 @@
 Aluminum Data
 ================
-(Your name here)
-2020-
+Amir Osorio
+2025-4-10
 
 - [Grading Rubric](#grading-rubric)
   - [Individual](#individual)
@@ -157,7 +157,7 @@ df_stang_long <-
     names_sep = "_",
     cols = c(-thick, -alloy)
   ) %>% 
-  filter (E>0) %>% 
+  filter(E>0) %>% 
   transform(angle = as.integer(angle))
 
 df_stang_long
@@ -239,39 +239,104 @@ print("Very good!")
 ### **q2** Perform a basic EDA on the aluminum data *without visualization*. Use your analysis to answer the questions under *observations* below. In addition, add your own *specific* question that you’d like to answer about the data—you’ll answer it below in q3.
 
 ``` r
-# This data set is based on the experiment of scientists at the Bureau of Standards who tested a number of Aluminum plates to determine their material properties in 1946. After tidying up the data set to make it much easier to read, we are left with the following information/columns:
-
-# Thick - The thickness of the sample piece.
-# Alloy - the certain mixture of the chemical compound that makes up the sample piece.
-# Angle - the respective angle measurement in which the sample was experimented under.
-# E - Elasticity (the value which describes the materials ability to be distorted and ability to return to its original state.)
-# nu -  Poisson's Ratio (the value which describes the deformation of a material in directions perpendicular to the specific direction of loading.)
-
-# The following data set looks particularly in to the "al_24st" with all other properties including thickness, Elasticity, Poisson's ratio, and angle varying to the specific experiment.
-
-# As we can see from the data there is no one "true" values from the data, for the properties of the aluminum that was used.
-
-# the angles that we tested did vary but included the angles 0, 45, and 90.
-
-# The thicknesses also varied, but stayed within the range of 0.022 and 0.081.
-
-# A question that I would like to answer given this data set is "At what angle is the recorded poissons ratio the highest in general?"
+df_stang_long %>% 
+  distinct(alloy)
 ```
+
+    ##     alloy
+    ## 1 al_24st
+
+This data set is based on the experiment of scientists at the Bureau of
+Standards who tested a number of Aluminum plates to determine their
+material properties in 1946. After tidying up the data set to make it
+much easier to read, we are left with the following information/columns:
+
+Thick - The thickness of the sample piece. Alloy - the certain mixture
+of the chemical compound that makes up the sample piece. Angle - the
+respective angle measurement in which the sample was experimented under.
+E - Elasticity (the value which describes the materials ability to be
+distorted and ability to return to its original state.) nu - Poisson’s
+Ratio (the value which describes the deformation of a material in
+directions perpendicular to the specific direction of loading.)
+
+The following data set looks particularly in to the “al_24st” with all
+other properties including thickness, Elasticity, Poisson’s ratio, and
+angle varying to the specific experiment.
+
+As we can see from the data there is no one “true” values from the data,
+for the properties of the aluminum that was used.
+
+the angles that we tested did vary but included the angles 0, 45, and
+90. The thicknesses also varied, but stayed within the range of 0.022
+and 0.081.
+
+A question that I would like to answer given this data set is “At what
+angle is the recorded poissons ratio the highest in general?”
 
 **Observations**:
 
 - Is there “one true value” for the material properties of Aluminum?
-  - As we can see from the data there is no one “true” values from the
-    data, for the properties of the aluminum that was used.
+  - As we can see from the data in this code chunk below, there is no
+    one “true” value for each of the material properties as they vary.
+
+``` r
+df_stang
+```
+
+    ## # A tibble: 9 × 8
+    ##   thick  E_00 nu_00  E_45  nu_45  E_90 nu_90 alloy  
+    ##   <dbl> <dbl> <dbl> <dbl>  <dbl> <dbl> <dbl> <chr>  
+    ## 1 0.022 10600 0.321 10700  0.329 10500 0.31  al_24st
+    ## 2 0.022 10600 0.323 10500  0.331 10700 0.323 al_24st
+    ## 3 0.032 10400 0.329 10400  0.318 10300 0.322 al_24st
+    ## 4 0.032 10300 0.319 10500  0.326 10400 0.33  al_24st
+    ## 5 0.064 10500 0.323 10400  0.331 10400 0.327 al_24st
+    ## 6 0.064 10700 0.328 10500  0.328 10500 0.32  al_24st
+    ## 7 0.081 10000 0.315 10000  0.32   9900 0.314 al_24st
+    ## 8 0.081 10100 0.312  9900  0.312 10000 0.316 al_24st
+    ## 9 0.081 10000 0.311    -1 -1      9900 0.314 al_24st
+
 - How many aluminum alloys are in this dataset? How do you know?
   - The following data set looks particularly in to the “al_24st” in all
-    tests, so one alloy.
+    tests, so simply one type alloy (As shown below).
+
+``` r
+df_stang_long %>%
+  distinct(alloy)
+```
+
+    ##     alloy
+    ## 1 al_24st
+
 - What angles were tested?
   - The angles that we tested did vary but included the angles 0, 45,
-    and 90.
+    and 90 (As shown below).
+
+``` r
+df_stang_long %>%
+  distinct(angle)
+```
+
+    ##   angle
+    ## 1     0
+    ## 2    45
+    ## 3    90
+
 - What thicknesses were tested?
-  - The thicknesses that were tested were within the range of 0.022 and
-    0.081.
+  - The thicknesses that were tested were 0.022, 0.032, 0.064, and 0.081
+    (As shown below.
+
+``` r
+df_stang_long %>%
+  distinct(thick)
+```
+
+    ##   thick
+    ## 1 0.022
+    ## 2 0.032
+    ## 3 0.064
+    ## 4 0.081
+
 - A question that I would like to answer given this data set is “At what
   angle is the recorded poissons ratio the highest in general?”
 
@@ -324,17 +389,23 @@ df_stang_long %>%
 **Observations**:
 
 - Does this graph support or contradict the claim above?
-  - The graph sort of contradicts this claim, mainly because different
-    thicknesses are at different areas of E. For example, the thickness
-    0.081 in generally on the bottom left of the graph in terms of
-    elasticity while when compared with the thickness 0.022, we can see
-    that it generally is around the top right corner of the graph,
-    signaling that it has a higher E.
+
+  - The graph does not really support this claim, mainly because
+    different thicknesses are at different areas of E. For example, the
+    thickness 0.081 in generally on the bottom left of the graph in
+    terms of elasticity while when compared with the thickness 0.022, we
+    can see that it generally is around the top right corner of the
+    graph, signaling that it has a higher E.
+
 - Is this evidence *conclusive* one way or another?
+
   - From the way this graph is plotted, it concludes that thickness does
     have an effect on elasticity based on the varying levels of
     elasticity and the positioning of the colors representing those
-    thickness’s.
+    thickness’s. However, it should not be concluded that E or nu
+    depends on thickness, as the data was collected through methods
+    where the thickness plates were measured using different techniques
+    (likely altering the data).
 
 # References
 
