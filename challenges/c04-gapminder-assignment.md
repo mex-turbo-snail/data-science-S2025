@@ -1,7 +1,7 @@
 Gapminder
 ================
-(Your name here)
-2020-
+Amir Osorio
+2025-04-13
 
 - [Grading Rubric](#grading-rubric)
   - [Individual](#individual)
@@ -134,10 +134,14 @@ well.
 ``` r
 ## TASK: Find the largest and smallest values of `year` in `gapminder`
 year_max <- 
-  max(pull(gapminder, year))
+  gapminder %>% 
+  pull(year) %>%
+  max()
 
 year_min <- 
-  min(pull(gapminder, min(year)))
+  gapminder %>% 
+  pull(year) %>%
+  min()
 ```
 
 Use the following test to check your work.
@@ -192,14 +196,15 @@ df_year_ymin <-
 
 df_year_ymin %>% 
   ggplot(aes(continent, gdpPercap)) +
-  geom_boxplot()
+  geom_boxplot() +
+  scale_y_log10()
 ```
 
 ![](c04-gapminder-assignment_files/figure-gfm/q2-task-1.png)<!-- -->
 
 **Observations**:
 
-- As we can see with the following box plot, there are plenty of
+- As we can see with the following box plot, there are a couple of
   outliers. We can make the observation that at this point in time,
   there in a country in Asia that has an extremely high GDP. We also
   notice that Africa host some of the lowest GDPs based on its position
@@ -212,9 +217,8 @@ df_year_ymin %>%
   the box plot, which gives a good picture of the data, including the
   outliers as well. Another problem that I ran into was the fact that
   the outlier for the continent of Asia was so high that it essentially
-  warped the graph. Although you can still make sense of it, it would be
-  best to find a way in which the data wont exactly be altered the way
-  it is in the box plot.
+  warped the graph. Now with the added log log scale it is easier to
+  understand than with a regular scale.
 
 ### **q3** You should have found *at least* three outliers in q2 (but possibly many more!). Identify those outliers (figure out which countries they are).
 
@@ -302,7 +306,8 @@ gapminder %>%
     data = . %>% filter(country %in% c("United Kingdom", "Japan", "Zambia")),
     mapping = aes(color = country),
     size = 2
-  )
+  ) + 
+  scale_y_log10()
 ```
 
 ![](c04-gapminder-assignment_files/figure-gfm/layer-filter-1.png)<!-- -->
@@ -325,7 +330,8 @@ gapminder %>%
     mapping = aes(color = country),
     size = 2
   ) +
-facet_wrap(~year)
+facet_wrap(~year) + 
+  scale_y_log10()
 ```
 
 ![](c04-gapminder-assignment_files/figure-gfm/q4-task-1.png)<!-- -->
@@ -334,11 +340,11 @@ facet_wrap(~year)
 
 - As we can see, a grand majority of continents, or countries for that
   matter, have had an increase in their GDP’s. What was most surprising
-  however is the fact that the previously highest GDP’s for the year
-  1952 dramatically decreased in the year 2007.Although it still seems
-  to have the highest GDP, it makes you think about what cause this to
-  happen, or what cause for such a strong decrease in the country’s
-  GDP’s.
+  however is the fact that the country who previously had the highest
+  GDP’s for the year 1952 dramatically decreased in the year
+  2007.Although it still seems to have the highest GDP in 2007, it makes
+  you think about what cause this to happen, or what cause for such a
+  strong decrease in the country’s GDP’s.
 
 # Your Own EDA
 
@@ -410,4 +416,4 @@ geom_line()
 With this in mind I would like to ask the following question:
 
 “What country in Asia is contributing the most to such exponential
-growth?”
+growth in median population?”
