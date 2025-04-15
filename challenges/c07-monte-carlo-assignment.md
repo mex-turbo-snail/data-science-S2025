@@ -301,14 +301,23 @@ print("Your assertions passed, but make sure they're checking the right thing!")
   circle. Why did you choose this value?
   - I choose this value being that the radius of the circle is 1, so if
     the coordinates were (1, 1) this would mean that the point is
-    outside of the circle ( which is what I have in the assert
-    statement).
+    outside of the circle (which is what I have in the assert
+    statement). As the stat function uses the Pythagorean theorem, these
+    two values would return the number 2, But because the function also
+    versify that this value is less than 1, the statement would return
+    0, and when 0 is multiplies by 4, it again will equal 0 (hence why
+    these values are correct).
 - You chose a correct value of `stat(x, y)` when `x, y` is *inside* the
   circle. Why did you choose this value?
   - I choose this value being that the radius of the circle is 1, so if
     the coordinates were (0.5, 0.5) this would mean that the point is
     inside of the circle ( which is what I have in the assert
-    statement).
+    statement). In this case, the function stat will essentially use the
+    Pythagorean theorem to compute the “hypotenuse” of the triangle
+    based on the x and Y coordinates that it is given and then make sure
+    that the final answer is less than or equal to 1. In this case,
+    because it was equal to 1, the statement returns 1 and then is
+    multiplied by 4, hence why this set of values is correct.
 
 ### **q3** Estimate $\pi$
 
@@ -318,8 +327,8 @@ Using your data in `df_q1`, estimate $\pi$.
 ## TASK: Estimate pi using your data from q1
 df_q3 <- 
   df_q1 %>%
-  mutate(o = stat(x, y)) %>% 
-summarize(pi_est = mean(o))
+  mutate(est_data = stat(x, y)) %>% 
+summarize(pi_est = mean(est_data))
   
 df_q3
 ```
@@ -327,7 +336,7 @@ df_q3
     ## # A tibble: 1 × 1
     ##   pi_est
     ##    <dbl>
-    ## 1   3.15
+    ## 1   3.14
 
 Use the following to check that you’ve used the correct variable names.
 (NB. This does not check correctness.)
@@ -431,7 +440,7 @@ df_q5
     ## # A tibble: 1 × 2
     ##   pi_lo pi_up
     ##   <dbl> <dbl>
-    ## 1  3.14  3.16
+    ## 1  3.13  3.15
 
 ### **q6** CLT confidence interval
 
@@ -448,7 +457,7 @@ done something *wrong* in one of the tasks….
 
 ``` r
 df_q1 %>%
-  mutate(stat = stat(x, y),
+  summarize(stat = stat(x, y),
          n = 100000,
          sd = sd(stat),
          mean = mean (stat),
@@ -456,22 +465,31 @@ df_q1 %>%
          se = sd / sqrt(n),
          lo = mean - z_c * se,
          hi = mean + z_c * se,
-    flag = (lo <= 0.5) & (0.5 <= hi))
+         flag = (lo <= 0.5) & (0.5 <= hi)
+  )
 ```
 
-    ## # A tibble: 100,000 × 11
-    ##         x     y  stat      n    sd  mean   z_c      se    lo    hi flag 
-    ##     <dbl> <dbl> <dbl>  <dbl> <dbl> <dbl> <dbl>   <dbl> <dbl> <dbl> <lgl>
-    ##  1 0.731  0.851     0 100000  1.64  3.15  1.96 0.00518  3.14  3.16 FALSE
-    ##  2 0.276  0.840     4 100000  1.64  3.15  1.96 0.00518  3.14  3.16 FALSE
-    ##  3 0.652  0.616     4 100000  1.64  3.15  1.96 0.00518  3.14  3.16 FALSE
-    ##  4 0.701  0.779     0 100000  1.64  3.15  1.96 0.00518  3.14  3.16 FALSE
-    ##  5 0.112  0.508     4 100000  1.64  3.15  1.96 0.00518  3.14  3.16 FALSE
-    ##  6 0.492  0.548     4 100000  1.64  3.15  1.96 0.00518  3.14  3.16 FALSE
-    ##  7 0.0313 0.324     4 100000  1.64  3.15  1.96 0.00518  3.14  3.16 FALSE
-    ##  8 0.0455 0.364     4 100000  1.64  3.15  1.96 0.00518  3.14  3.16 FALSE
-    ##  9 0.973  0.161     4 100000  1.64  3.15  1.96 0.00518  3.14  3.16 FALSE
-    ## 10 0.749  0.363     4 100000  1.64  3.15  1.96 0.00518  3.14  3.16 FALSE
+    ## Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in
+    ## dplyr 1.1.0.
+    ## ℹ Please use `reframe()` instead.
+    ## ℹ When switching from `summarise()` to `reframe()`, remember that `reframe()`
+    ##   always returns an ungrouped data frame and adjust accordingly.
+    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+    ## generated.
+
+    ## # A tibble: 100,000 × 9
+    ##     stat      n    sd  mean   z_c      se    lo    hi flag 
+    ##    <dbl>  <dbl> <dbl> <dbl> <dbl>   <dbl> <dbl> <dbl> <lgl>
+    ##  1     4 100000  1.64  3.14  1.96 0.00520  3.13  3.15 FALSE
+    ##  2     4 100000  1.64  3.14  1.96 0.00520  3.13  3.15 FALSE
+    ##  3     4 100000  1.64  3.14  1.96 0.00520  3.13  3.15 FALSE
+    ##  4     0 100000  1.64  3.14  1.96 0.00520  3.13  3.15 FALSE
+    ##  5     4 100000  1.64  3.14  1.96 0.00520  3.13  3.15 FALSE
+    ##  6     4 100000  1.64  3.14  1.96 0.00520  3.13  3.15 FALSE
+    ##  7     0 100000  1.64  3.14  1.96 0.00520  3.13  3.15 FALSE
+    ##  8     4 100000  1.64  3.14  1.96 0.00520  3.13  3.15 FALSE
+    ##  9     4 100000  1.64  3.14  1.96 0.00520  3.13  3.15 FALSE
+    ## 10     4 100000  1.64  3.14  1.96 0.00520  3.13  3.15 FALSE
     ## # ℹ 99,990 more rows
 
 **Observations**:
@@ -481,14 +499,13 @@ df_q1 %>%
   - (CLT CI: yes)
 - How closely do your bootstrap CI and CLT CI agree?
   - The bootstrap version seems to be a bit higher than the CTL version
-    in terms of the larger estimations. In general the CTL was much more
-    accurate.
+    in terms of the larger estimations.
 - Comment on the width of your CI(s). Would your estimate of $\pi$ be
   good enough for roughly estimating an area (e.g., to buy enough paint
   for an art project)? Would your estimate of $\pi$ be good enough for
   precisely calculating a trajectory (e.g., sending a rocket into
   orbit)?
-  - I believe that fromt the CI’s, they are good rough estimates.
+  - I believe that from the CI’s, they are good rough estimates.
   - From the CI’s I feel like they are to off to be used for very
     precise calculations or for things that require precision.
 - What would be a *valid* way to make your CI more narrow?

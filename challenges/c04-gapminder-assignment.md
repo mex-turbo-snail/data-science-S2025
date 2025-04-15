@@ -194,6 +194,8 @@ can.
 df_year_ymin <-
   filter(gapminder, year == year_min)
 
+
+
 df_year_ymin %>% 
   ggplot(aes(continent, gdpPercap)) +
   geom_boxplot() +
@@ -305,7 +307,7 @@ gapminder %>%
   geom_point(
     data = . %>% filter(country %in% c("United Kingdom", "Japan", "Zambia")),
     mapping = aes(color = country),
-    size = 2
+    size = 3
   ) + 
   scale_y_log10()
 ```
@@ -328,7 +330,7 @@ gapminder %>%
   geom_point(
     data = . %>% filter(country %in% c("Kuwait", "Switzerland", "United States")),
     mapping = aes(color = country),
-    size = 2
+    size = 3
   ) +
 facet_wrap(~year) + 
   scale_y_log10()
