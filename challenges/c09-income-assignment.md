@@ -492,19 +492,20 @@ df_data %>%
   - Based on the visual, I can see that the families that end up on the
     lower side of the median household income are 2 person families. I
     find it interesting however that most of the other sized families
-    vary in terms of range depending on county. As an example of this,
-    we can see that in Nantucket, there is a really wide range of median
-    household income when it comes to 5 person families, but when it
-    comes to 5 person families in Bristol for example, that range it
-    extremely low. I makes you think on why ity might be this way, but
-    also gives you the information on which counties might be struggling
-    the most in terms of median household income, and with this
-    information, the opportunity to help those who need it.
+    vary in terms of confidence interval depending on county. As an
+    example of this, we can see that in Nantucket, there is a really
+    wide confidence interval for median household income when it comes
+    to 5 person families, but when it comes to 5 person families in
+    Bristol for example, that confidence interval it extremely low. I
+    makes you think on why ity might be this way, but also gives you the
+    information on which counties might be struggling the most in terms
+    of median household income, and with this information, the
+    opportunity to help those who need it.
 - Can you confidently distinguish between household incomes in Suffolk
   county? Why or why not?
   - No, I say this because in Suffolk in particular, the household
-    income ranges are so small that it becomes difficult to
-    differentiate one another.
+    income confidence intervals are so small that it becomes difficult
+    to differentiate one another.
 - Which counties have the widest confidence intervals?
   - Nantucket, Dukes, and Hampshire.
 
@@ -518,7 +519,7 @@ and uncertainty.
 
 ``` r
 df_data %>%
-  ggplot(aes(income_SE, population_estimate, color = category)) +
+  ggplot(aes(population_estimate, income_SE, color = category)) +
   geom_point()+
   scale_y_log10()
 ```
