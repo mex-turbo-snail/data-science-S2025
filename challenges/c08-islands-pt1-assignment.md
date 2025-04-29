@@ -137,15 +137,18 @@ you still need to count, because your numbers *will* be different!
 - Are there any sources of *real* uncertainty in the percent occupied
   you calculated?
 
-  - It is possible that I accidentally miscounted the number of occupied
-    houses and messed up the percentage calculation.
+  - When thinking about *real* uncertainty, in the percent occupied that
+    I calculated, an example of this could be the fact that in this
+    simulation of the Islands, people have the chance to move around
+    into diffrent towns and diffrent cites which can affect the number
+    of unoccupied houses over time, which would then affect the percent
+    occupied.
 
 - Are there any sources of *erroneous* uncertainty in the percent
   occupied you calculated?
 
-  - I guess you could also say that because I didn’t give the exact
-    numerical value and a rounded one form the percentage of occupation,
-    that this could be an example of erroneous.
+  - It is possible that I accidentally miscounted the number of occupied
+    houses and messed up the percentage calculation.
 
 Zach looked at the first 25 homes in Helvig and recorded the `age` and
 `name` of every person in those homes. These people are provided in
@@ -481,9 +484,9 @@ df_sample_random %>%
 - Did you find any highly prevalent names using `df_sample_random` that
   you *didn’t* find in q3 (using `df_sample_seq`)? Write them here.
 
-  - Yeah, I have 3 other prevalent names that beat the Sorensen name or
-    have equal amounts of prevalence. Those names are
-    “Collins”,“Blomgren”, and “Regan”.
+  - Yeah, I have 2 other prevalent names that beat the Sorensen name or
+    have simmilar amounts of prevalence. Those names are “Collins”and
+    “Regan”.
 
 - Is there any reason that people with the same last name might tend to
   *live near each other*?
