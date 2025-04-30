@@ -606,13 +606,14 @@ top_10_deaths
 
 - I see that the county with the highest cases per 100k was Loving,
   Texas, and that the county with the highest deaths per 100k was
-  McMullen, Texas.
+  McMullen, Texas. The other most prominent states include Georgia and
+  Alaska.
 
 - When did these “largest values” occur?
 
-  - The largest values in this case occurred in 2020, specifically on
+  - The largest values in this case occurred in 2022, specifically on
     may 13th, this of couse coming from the fact that I looked at the
-    latest date in the dataset which would give the best representation
+    latest date in the data set which would give the best representation
     of the overall effect on deaths per 100k and cases per 100k.
 
 ## Self-directed EDA
