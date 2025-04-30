@@ -165,7 +165,7 @@ To check your results, this is Table `B01003`.
 
 ``` r
 ## TASK: Load the census bureau data with the following tibble name.
-df_pop <- read_csv("ACSDT5Y2018.B01003-Data.csv", skip = 1, show_col_types = FALSE)%>%
+df_pop <- read_csv("data/ACSDT5Y2018.B01003-Data.csv", skip = 1, show_col_types = FALSE)%>%
   select(-last_col())
 ```
 
@@ -521,23 +521,28 @@ include in your summaries,* and justify why!
 
 ``` r
 ## TASK: Compute mean and sd for cases_per100k and deaths_per100k
+latest_date <- max(df_normalized$date)
 
-cases_per_100k_na <- mean(df_normalized$cases_per100k, na.rm = TRUE)
-deaths_per_100k_na <- mean(df_normalized$deaths_per100k, na.rm = TRUE)
+df_latest <- df_normalized %>%
+  filter(date == latest_date)
 
 
-cases_per_100k_sd <- sd(df_normalized$cases_per100k, na.rm = TRUE)
-deaths_per_100k_sd <- sd(df_normalized$deaths_per100k, na.rm = TRUE)  
+cases_per_100k_na <- mean(df_latest$cases_per100k, na.rm = TRUE)
+deaths_per_100k_na <- mean(df_latest$deaths_per100k, na.rm = TRUE)
+
+
+cases_per_100k_sd <- sd(df_latest$cases_per100k, na.rm = TRUE)
+deaths_per_100k_sd <- sd(df_latest$deaths_per100k, na.rm = TRUE)  
 ```
 
 - Which rows did you pick?
-  - I made sure to pick all rows but those that had NA values.
+  - I picked the rows with the most recent date.
 - Why?
-  - I found I only needed to omit the values that had NA values because
-    it will not allow me to go through with the procedure. Other than
-    that, I felt as if I were to keep the data I could, it would give a
-    much better representation of the data, instead of cherry picking
-    other parts.
+  - I picked these to make sure that we aren’t comparing the same
+    counties and focusing on one date where each county has its
+    respective data. I picked the latest date in order to represent the
+    aftermath of the COVID-19 pandemic, in terms of deaths per 100k and
+    cases per 100k.
 
 ### **q7** Find and compare the top 10
 
@@ -550,63 +555,65 @@ you found in q6. Note any observations.
 ## TASK: Find the top 10 max cases_per100k counties; report populations as well
 
 top_10_cases <-
-  df_normalized %>% 
+  df_latest %>%
+  arrange(desc(cases_per100k)) %>%
    top_n(10, cases_per100k) %>%
   select(date, county, state, cases_per100k, population)
   
 top_10_deaths <-
-  df_normalized %>% 
+  df_latest %>%
+  arrange(desc(deaths_per100k)) %>%
    top_n(10, deaths_per100k) %>%
-  select(date,county, state, deaths_per100k, population)
+  select(date, county, state, deaths_per100k, population)
   
 
 top_10_cases
 ```
 
     ## # A tibble: 10 × 5
-    ##    date       county state cases_per100k population
-    ##    <date>     <chr>  <chr>         <dbl>      <dbl>
-    ##  1 2022-05-04 Loving Texas       186275.        102
-    ##  2 2022-05-05 Loving Texas       187255.        102
-    ##  3 2022-05-06 Loving Texas       187255.        102
-    ##  4 2022-05-07 Loving Texas       188235.        102
-    ##  5 2022-05-08 Loving Texas       190196.        102
-    ##  6 2022-05-09 Loving Texas       191176.        102
-    ##  7 2022-05-10 Loving Texas       191176.        102
-    ##  8 2022-05-11 Loving Texas       191176.        102
-    ##  9 2022-05-12 Loving Texas       192157.        102
-    ## 10 2022-05-13 Loving Texas       192157.        102
+    ##    date       county                   state        cases_per100k population
+    ##    <date>     <chr>                    <chr>                <dbl>      <dbl>
+    ##  1 2022-05-13 Loving                   Texas              192157.        102
+    ##  2 2022-05-13 Chattahoochee            Georgia             69527.      10767
+    ##  3 2022-05-13 Nome Census Area         Alaska              62922.       9925
+    ##  4 2022-05-13 Northwest Arctic Borough Alaska              62542.       7734
+    ##  5 2022-05-13 Crowley                  Colorado            59449.       5630
+    ##  6 2022-05-13 Bethel Census Area       Alaska              57439.      18040
+    ##  7 2022-05-13 Dewey                    South Dakota        54317.       5779
+    ##  8 2022-05-13 Dimmit                   Texas               54019.      10663
+    ##  9 2022-05-13 Jim Hogg                 Texas               50133.       5282
+    ## 10 2022-05-13 Kusilvak Census Area     Alaska              49817.       8198
 
 ``` r
 top_10_deaths
 ```
 
-    ## # A tibble: 84 × 5
-    ##    date       county   state deaths_per100k population
-    ##    <date>     <chr>    <chr>          <dbl>      <dbl>
-    ##  1 2022-02-19 McMullen Texas          1360.        662
-    ##  2 2022-02-20 McMullen Texas          1360.        662
-    ##  3 2022-02-21 McMullen Texas          1360.        662
-    ##  4 2022-02-22 McMullen Texas          1360.        662
-    ##  5 2022-02-23 McMullen Texas          1360.        662
-    ##  6 2022-02-24 McMullen Texas          1360.        662
-    ##  7 2022-02-25 McMullen Texas          1360.        662
-    ##  8 2022-02-26 McMullen Texas          1360.        662
-    ##  9 2022-02-27 McMullen Texas          1360.        662
-    ## 10 2022-02-28 McMullen Texas          1360.        662
-    ## # ℹ 74 more rows
-
-``` r
-## TASK: Find the top 10 deaths_per100k counties; report populations as well
-```
+    ## # A tibble: 10 × 5
+    ##    date       county            state        deaths_per100k population
+    ##    <date>     <chr>             <chr>                 <dbl>      <dbl>
+    ##  1 2022-05-13 McMullen          Texas                 1360.        662
+    ##  2 2022-05-13 Galax city        Virginia              1175.       6638
+    ##  3 2022-05-13 Motley            Texas                 1125.       1156
+    ##  4 2022-05-13 Hancock           Georgia               1054.       8535
+    ##  5 2022-05-13 Emporia city      Virginia              1022.       5381
+    ##  6 2022-05-13 Towns             Georgia               1016.      11417
+    ##  7 2022-05-13 Jerauld           South Dakota           986.       2029
+    ##  8 2022-05-13 Loving            Texas                  980.        102
+    ##  9 2022-05-13 Robertson         Kentucky               980.       2143
+    ## 10 2022-05-13 Martinsville city Virginia               946.      13101
 
 **Observations**:
 
-- I see that the county with the highest cases was Loving, Texas, and
-  that the county with the highest deaths was McMullen, Texas.
+- I see that the county with the highest cases per 100k was Loving,
+  Texas, and that the county with the highest deaths per 100k was
+  McMullen, Texas.
+
 - When did these “largest values” occur?
-  - It seems that these event happend in the beginning of the year in
-    2022.
+
+  - The largest values in this case occurred in 2020, specifically on
+    may 13th, this of couse coming from the fact that I looked at the
+    latest date in the dataset which would give the best representation
+    of the overall effect on deaths per 100k and cases per 100k.
 
 ## Self-directed EDA
 
