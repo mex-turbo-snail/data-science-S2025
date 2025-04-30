@@ -216,12 +216,15 @@ df_data %>%
 
 - What are the unique values for `subject_race`?
 
-Some unique values for ‘subject_race’ include “Unknown” and other”.
+The unique values for ‘subject_race’ include “white”, “hispanic”,
+“black”, “asian/pacific islander”, “other”and “NA” and “unknown”.
 
 - What are the unique values for `raw_Race`?
 
-Some unique values for ‘raw_Race’ include ‘None’, “Middle eastern or
-east Indian” and ‘A’.
+The unique values for ‘raw_Race’ include “White”, “Hispanic”, “Black”,
+“Asian or Pacific Islander”, “Middle Eastern or East Indian (South
+Asian)”, “American Indian or Alaskan Native”, “NA”, “None - for no
+operator present citations only” and “A”.
 
 - What is the overlap between the two sets?
 
@@ -368,9 +371,9 @@ fit_q6 %>% tidy()
 **Observations**:
 
 - Which `subject_race` levels are included in fitting the model?
-  - White , black and Hispanic
+  - White, black and Hispanic
 - Which `subject_race` levels have terms in the model?
-  - White and black
+  - White and hispanic.
 
 You should find that each factor in the model has a level *missing* in
 its set of terms. This is because R represents factors against a
@@ -431,7 +434,8 @@ fit_q7 %>% tidy()
 - Which `subject_race` level has the highest probability of being
   arrested, according to this model? Which has the lowest probability?
   - The group with the highest probability of being arrested is
-    Hispanic, with the lowest probability coming from black.
+    Hispanic, second highest being black, and because we are using white
+    as a reference, white would have the lowest probability. .
 - What could explain this difference in probabilities of arrest across
   race? List **multiple** possibilities.
   - This could be because of many things including, racial bias, over
@@ -484,7 +488,13 @@ fit_q8 %>% tidy()
 - How does controlling for found contraband affect the `subject_race`
   terms in the model?
   - We do see some change in values for estimate , std.error, etc. We
-    also now have a term for contraband in the model.
+    also now have a term for contraband in the model. For each however,
+    the effect on estimate values have changes in some way. For example.
+    for Hispanics, they are still the most prominent race to be arrested
+    in comparison to whites where as blacks they are now the least
+    likely to be arrested for found contraband than whites. In general,
+    for blacks and hispanics we see and decrease in prominence but, for
+    white we see an increase in prominence.
 - What does the *finding of contraband* tell us about the stop? What
   does it *not* tell us about the stop?
   - It does tell us that the person arrested was likely arrested for
